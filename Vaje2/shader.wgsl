@@ -1,28 +1,38 @@
-//rabimo 2 funkciji: vs in fs
+struct VertexInput {
+    @location(0) position: vec2f,
+    @location(1) color: vec4f,
+}
+
 struct VertexOutput {
     @builtin(position) position: vec4f,
-    @location(1) color: vec4f,
-    
+    @location(0) color: vec4f,
 }
 
-@group(0)
-@binding(0)
-var<uniform> matrix: mat4x4f;
+struct FragmentInput {
+    @location(0) color: vec4f,
+}
+
+struct FragmentOutput {
+    @location(0) color: vec4f,
+}
+
+@group(0) @binding(0) var<uniform> matrix: mat4x4f;
 
 @vertex
-//vrne ogljišča
-fn vertex(@location(0) position: vec4f, @location(1) color: vec4f) -> VertexOutput {
+fn vertex(input: VertexInput) -> VertexOutput {
     var output: VertexOutput;
 
-    output.position = matrix * position;
-    output.color = color;
+    output.position = matrix * vec4(input.position, 0, 1);
+    output.color = input.color;
+
     return output;
 }
-	
+
 @fragment
-//vrne barvo
-fn fragment(@location(1) color: vec4f) -> @location(0) vec4f {
-	return color;
+fn fragment(input: FragmentInput) -> FragmentOutput {
+    var output: FragmentOutput;
+
+    output.color = input.color;
+
+    return output;
 }
-
-
